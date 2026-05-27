@@ -1,0 +1,41 @@
+# 의존성
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# 빌드 결과물
+frontend/dist/
+frontend/.vite/
+
+# 환경 변수 (민감 정보)
+backend/.env
+frontend/.env
+frontend/.env.local
+
+# Vite 캐시
+.vite/
+frontend/.vite/
+
+# 임시 파일
+*.tmp.*
+
+# 데이터베이스
+backend/db/*.db
+backend/db/*.db-shm
+backend/db/*.db-wal
+
+# 에디터
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 로그
+*.log
+npm-debug.log*
