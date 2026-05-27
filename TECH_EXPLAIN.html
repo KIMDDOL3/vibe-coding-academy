@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>바이브 코딩 아카데미 — 쉽게 이해하는 기술 설명서</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #0f0c29;
+    color: #fff;
+    overflow-x: hidden;
+  }
+
+  /* 별 배경 */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(ellipse at top, #1a1a4e 0%, #0f0c29 60%);
+    z-index: -2;
+  }
+
+  .stars {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite alternate;
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0.2; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.3); }
+  }
+
+  /* 공통 */
+  .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+
+  section {
+    padding: 80px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .section-number {
+    display: inline-block;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    text-align: center;
+    line-height: 40px;
+    font-weight: 900;
+    margin-bottom: 12px;
+    font-size: 18px;
+  }
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    color: #94a3b8;
+    font-size: 1rem;
+    margin-bottom: 40px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(99,102,241,0.5);
+  }
+
+  .emoji-big { font-size: 3rem; margin-bottom: 12px; display: block; }
+
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 4px;
+  }
+
+  /* ========================
+     1. HERO
+  ======================== */
+  .hero {
+    text-align: center;
+    padding: 100px 20px 80px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    max-width: 560px;
+    margin: 0 auto 40px;
+    line-height: 1.8;
+  }
+
+  /* ========================
+     2. 전체 구조 다이어그램
+  ======================== */
+  .arch-diagram {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .arch-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+  }
+
+  .arch-box {
+    border-radius: 16px;
+    padding: 16px 24px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    min-width: 140px;
+    text-align: center;
+    position: relative;
+  }
+
+  .arch-box.user   { background: linear-gradient(135deg, #1e3a5f, #2563eb); border: 2px solid #3b82f6; }
+  .arch-box.front  { background: linear-gradient(135deg, #1e1b4b, #4f46e5); border: 2px solid #6366f1; }
+  .arch-box.back   { background: linear-gradient(135deg, #14532d, #16a34a); border: 2px solid #22c55e; }
+  .arch-box.db     { background: linear-gradient(135deg, #7c2d12, #c2410c); border: 2px solid #f97316; }
+  .arch-box.github { background: linear-gradient(135deg, #1f2937, #374151); border: 2px solid #6b7280; }
+  .arch-box.railway{ background: linear-gradient(135deg, #1c0533, #7c3aed); border: 2px solid #8b5cf6; }
+  .arch-box.pages  { background: linear-gradient(135deg, #0c1a2e, #1d4ed8); border: 2px solid #60a5fa; }
+
+  .arch-arrow {
+    font-size: 1.5rem;
+    color: #6366f1;
+    animation: pulse-arrow 1.5s infinite;
+  }
+
+  @keyframes pulse-arrow {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.2); opacity: 1; }
+  }
+
+  .arch-label {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+
+  .arch-connector {
+    width: 2px;
+    height: 40px;
+    background: linear-gradient(to bottom, #6366f1, transparent);
+    margin: 0 auto;
+  }
+
+  /* ========================
+     3. 기술 스택
+  ======================== */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .tech-card {
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    border: 2px solid transparent;
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .tech-card:hover { transform: translateY(-6px) scale(1.02); }
+
+  .tech-card .icon { font-size: 2.5rem; margin-bottom: 10px; }
+  .tech-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  .tech-card p { font-size: 0.8rem; color: #94a3b8; line-height: 1.5; }
+
+  .tc-react  { background: linear-gradient(135deg, rgba(97,218,251,0.1), rgba(97,218,251,0.05)); border-color: rgba(97,218,251,0.3); }
+  .tc-vite   { background: linear-gradient(135deg, rgba(189,52,254,0.1), rgba(99,102,241,0.05)); border-color: rgba(189,52,254,0.3); }
+  .tc-tail   { background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(6,182,212,0.05)); border-color: rgba(6,182,212,0.3); }
+  .tc-express{ background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border-color: rgba(255,255,255,0.15); }
+  .tc-sqlite { background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(249,115,22,0.05)); border-color: rgba(249,115,22,0.3); }
+  .tc-jwt    { background: linear-gradient(135deg, rgba(236,72,153,0.1), rgba(236,72,153,0.05)); border-color: rgba(236,72,153,0.3); }
+
+  /* ========================
+     4. 비유 설명 카드
+  ======================== */
+  .analogy-card {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .analogy-card .real { text-align: right; }
+  .analogy-card .tech { text-align: left; }
+  .analogy-card .vs   { text-align: center; font-size: 1.5rem; }
+
+  .analogy-card h4 { font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; }
+  .analogy-card .real h4 { color: #fbbf24; }
+  .analogy-card .tech h4 { color: #818cf8; }
+  .analogy-card p { font-size: 0.9rem; color: #cbd5e1; line-height: 1.5; }
+
+  /* ========================
+     5. 페이지 구조
+  ======================== */
+  .pages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .page-card {
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    transition: all 0.3s;
+  }
+
+  .page-card:hover {
+    background: rgba(99,102,241,0.1);
+    border-color: rgba(99,102,241,0.4);
+  }
+
+  .page-url {
+    font-size: 0.75rem;
+    font-family: monospace;
+    background: rgba(99,102,241,0.2);
+    color: #818cf8;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+
+  .page-card h3 { font-size: 1rem; margin-bottom: 6px; }
+  .page-card p  { font-size: 0.82rem; color: #94a3b8; line-height: 1.5; }
+
+  /* ========================
+     6. 데이터 흐름
+  ======================== */
+  .flow-steps {
+    position: relative;
+    padding-left: 40px;
+  }
+
+  .flow-steps::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, #6366f1, #8b5cf6, #ec4899);
+    border-radius: 3px;
+  }
+
+  .flow-step {
+    position: relative;
+    padding: 20px 24px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    transition: all 0.3s;
+  }
+
+  .flow-step:hover {
+    background: rgba(99,102,241,0.08);
+    border-color: rgba(99,102,241,0.3);
+    transform: translateX(4px);
+  }
+
+  .flow-step::before {
+    content: attr(data-step);
+    position: absolute;
+    left: -32px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.85rem;
+    line-height: 28px;
+    text-align: center;
+  }
+
+  .flow-step h4 { font-size: 0.95rem; margin-bottom: 4px; color: #c7d2fe; }
+  .flow-step p  { font-size: 0.82rem; color: #94a3b8; line-height: 1.5; }
+
+  /* ========================
+     7. 커리큘럼
+  ======================== */
+  .module-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .module-card {
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: transform 0.3s;
+  }
+
+  .module-card:hover { transform: translateY(-6px); }
+
+  .module-header {
+    padding: 24px;
+    text-align: center;
+  }
+
+  .module-header .num { font-size: 0.8rem; opacity: 0.8; margin-bottom: 8px; }
+  .module-header h3   { font-size: 1.2rem; font-weight: 700; }
+
+  .module-body { padding: 20px; background: rgba(0,0,0,0.2); }
+  .module-body li {
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    list-style: none;
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .module-body li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: #818cf8;
+  }
+
+  .m1 .module-header { background: linear-gradient(135deg, #3730a3, #6d28d9); }
+  .m2 .module-header { background: linear-gradient(135deg, #6d28d9, #be185d); }
+  .m3 .module-header { background: linear-gradient(135deg, #065f46, #0e7490); }
+
+  /* ========================
+     8. 배포 경로
+  ======================== */
+  .deploy-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 30px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 24px;
+  }
+
+  .deploy-node {
+    text-align: center;
+    padding: 16px 20px;
+    border-radius: 14px;
+    min-width: 100px;
+  }
+
+  .deploy-node .d-icon { font-size: 2rem; margin-bottom: 6px; }
+  .deploy-node h4 { font-size: 0.82rem; font-weight: 700; }
+  .deploy-node p  { font-size: 0.7rem; color: #94a3b8; }
+
+  .dn-code    { background: rgba(99,102,241,0.15);  border: 1px solid rgba(99,102,241,0.3); }
+  .dn-git     { background: rgba(107,114,128,0.15); border: 1px solid rgba(107,114,128,0.3); }
+  .dn-actions { background: rgba(37,99,235,0.15);   border: 1px solid rgba(37,99,235,0.3); }
+  .dn-pages   { background: rgba(16,185,129,0.15);  border: 1px solid rgba(16,185,129,0.3); }
+  .dn-railway { background: rgba(139,92,246,0.15);  border: 1px solid rgba(139,92,246,0.3); }
+
+  .deploy-arrow { font-size: 1.4rem; color: #6366f1; }
+
+  /* ========================
+     9. DB 테이블
+  ======================== */
+  .db-diagram {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .db-table {
+    background: rgba(249,115,22,0.06);
+    border: 2px solid rgba(249,115,22,0.3);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .db-table-header {
+    background: rgba(249,115,22,0.2);
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .db-table-body { padding: 12px; }
+
+  .db-field {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    margin-bottom: 4px;
+  }
+
+  .db-field:nth-child(odd)  { background: rgba(255,255,255,0.04); }
+  .db-field:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+  .db-field-name { color: #fed7aa; font-family: monospace; }
+  .db-field-type { color: #94a3b8; font-size: 0.75rem; }
+  .db-field-pk   { color: #fbbf24; font-size: 0.7rem; font-weight: 700; }
+
+  /* ========================
+     10. 색상 시스템
+  ======================== */
+  .color-palette {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .color-swatch {
+    text-align: center;
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .swatch-box {
+    width: 100%;
+    height: 60px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .swatch-label { font-size: 0.72rem; color: #94a3b8; }
+  .swatch-hex   { font-family: monospace; font-size: 0.7rem; color: #cbd5e1; }
+
+  /* ========================
+     Footer
+  ======================== */
+  footer {
+    text-align: center;
+    padding: 60px 20px;
+    color: #475569;
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  footer span { color: #818cf8; }
+
+  /* ========================
+     반응형
+  ======================== */
+  @media (max-width: 600px) {
+    .analogy-card { grid-template-columns: 1fr; text-align: center; }
+    .analogy-card .real { text-align: center; }
+    .db-diagram { grid-template-columns: 1fr; }
+    .arch-row { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 별 배경 -->
+<div class="stars" id="stars"></div>
+
+<!-- ======================== HERO ======================== -->
+<div class="hero" style="text-align:center; padding: 100px 20px 60px;">
+  <p style="font-size:3rem; margin-bottom:16px;">⚡🤖📚</p>
+  <h1 style="font-size:clamp(2rem,6vw,3.5rem); font-weight:900; line-height:1.2; margin-bottom:20px;">
+    바이브 코딩 아카데미<br>
+    <span style="background:linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+      어떻게 만들어졌을까?
+    </span>
+  </h1>
+  <p style="font-size:1.1rem; color:#94a3b8; max-width:560px; margin:0 auto 16px; line-height:1.8;">
+    복잡한 기술 명세서를<br>
+    <strong style="color:#c7d2fe;">초등학생도 이해할 수 있게</strong> 설명해드릴게요!
+  </p>
+  <p style="color:#64748b; font-size:0.85rem;">스크롤을 내려서 하나씩 알아봐요 👇</p>
+</div>
+
+
+<!-- ======================== 1. 전체 구조 ======================== -->
+<section>
+  <div class="section-number">1</div>
+  <h2>전체 구조 한눈에 보기</h2>
+  <p class="subtitle">이 웹사이트는 세 가지 큰 부분으로 이루어져 있어요</p>
+
+  <div class="arch-diagram">
+    <!-- 유저 -->
+    <div class="arch-row">
+      <div class="arch-box user">
+        <div style="font-size:2rem;">👤</div>
+        <div>사용자 (여러분)</div>
+        <div class="arch-label">브라우저로 접속</div>
+      </div>
+    </div>
+
+    <div class="arch-connector"></div>
+    <div style="text-align:center; color:#6366f1; font-size:0.8rem; margin:-10px 0;">인터넷으로 요청 / 응답</div>
+    <div class="arch-connector" style="background: linear-gradient(to bottom, transparent, #6366f1);"></div>
+
+    <!-- 프론트엔드 -->
+    <div class="arch-row">
+      <div class="arch-box front">
+        <div style="font-size:2rem;">🖥️</div>
+        <div>프론트엔드</div>
+        <div class="arch-label">React + Vite (화면)</div>
+      </div>
+      <div class="arch-arrow">⇄</div>
+      <div class="arch-box back">
+        <div style="font-size:2rem;">⚙️</div>
+        <div>백엔드</div>
+        <div class="arch-label">Express (처리)</div>
+      </div>
+      <div class="arch-arrow">⇄</div>
+      <div class="arch-box db">
+        <div style="font-size:2rem;">🗄️</div>
+        <div>데이터베이스</div>
+        <div class="arch-label">SQLite (저장)</div>
+      </div>
+    </div>
+
+    <div class="arch-connector"></div>
+    <div style="text-align:center; color:#6366f1; font-size:0.8rem; margin:-10px 0;">GitHub에 코드 저장 → 자동 배포</div>
+    <div class="arch-connector" style="background: linear-gradient(to bottom, transparent, #6366f1);"></div>
+
+    <!-- 배포 -->
+    <div class="arch-row">
+      <div class="arch-box pages">
+        <div style="font-size:1.5rem;">🌐</div>
+        <div>GitHub Pages</div>
+        <div class="arch-label">프론트엔드 배포</div>
+      </div>
+      <div style="color:#64748b; font-size:0.9rem;">+</div>
+      <div class="arch-box railway">
+        <div style="font-size:1.5rem;">🚂</div>
+        <div>Railway</div>
+        <div class="arch-label">백엔드 배포</div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px; padding:16px; background:rgba(99,102,241,0.08); border-radius:12px;">
+      <p style="font-size:0.85rem; color:#94a3b8; line-height:1.7;">
+        🍕 <strong style="color:#c7d2fe;">피자집으로 비유하면:</strong><br>
+        화면(프론트엔드)은 <strong style="color:#60a5fa;">메뉴판과 홀</strong>,
+        서버(백엔드)는 <strong style="color:#4ade80;">주방</strong>,
+        데이터베이스는 <strong style="color:#fb923c;">냉장고</strong>예요!
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================== 2. 비유 설명 ======================== -->
+<section>
+  <div class="section-number">2</div>
+  <h2>어려운 단어를 쉽게 설명하면?</h2>
+  <p class="subtitle">기술 용어를 우리가 아는 것들로 비교해봐요</p>
+
+  <div class="analogy-card">
+    <div class="real">
+      <h4>🏠 실생활</h4>
+      <p><strong style="color:#fbbf24;">레스토랑 메뉴판</strong><br>음식 사진, 가격, 이름이 예쁘게 적혀있는 것</p>
+    </div>
+    <div class="vs">🔄</div>
+    <div class="tech">
+      <h4>💻 기술 용어</h4>
+      <p><strong style="color:#818cf8;">프론트엔드 (React)</strong><br>사람이 실제로 보고 클릭하는 화면</p>
+    </div>
+  </div>
+
+  <div class="analogy-card">
+    <div class="real">
+      <h4>🏠 실생활</h4>
+      <p><strong style="color:#fbbf24;">레스토랑 주방</strong><br>주문을 받아 요리를 만드는 곳</p>
+    </div>
+    <div class="vs">🔄</div>
+    <div class="tech">
+      <h4>💻 기술 용어</h4>
+      <p><strong style="color:#818cf8;">백엔드 (Express)</strong><br>데이터를 처리하고 결과를 돌려주는 서버</p>
+    </div>
+  </div>
+
+  <div class="analogy-card">
+    <div class="real">
+      <h4>🏠 실생활</h4>
+      <p><strong style="color:#fbbf24;">냉장고</strong><br>재료와 음식을 보관하는 곳</p>
+    </div>
+    <div class="vs">🔄</div>
+    <div class="tech">
+      <h4>💻 기술 용어</h4>
+      <p><strong style="color:#818cf8;">데이터베이스 (SQLite)</strong><br>회원정보, 학습기록을 저장하는 곳</p>
+    </div>
+  </div>
+
+  <div class="analogy-card">
+    <div class="real">
+      <h4>🏠 실생활</h4>
+      <p><strong style="color:#fbbf24;">신분증</strong><br>내가 누군지 증명하는 카드</p>
+    </div>
+    <div class="vs">🔄</div>
+    <div class="tech">
+      <h4>💻 기술 용어</h4>
+      <p><strong style="color:#818cf8;">JWT 토큰</strong><br>로그인하면 받는 디지털 신분증</p>
+    </div>
+  </div>
+
+  <div class="analogy-card">
+    <div class="real">
+      <h4>🏠 실생활</h4>
+      <p><strong style="color:#fbbf24;">우편함 주소</strong><br>택배 받을 수 있는 곳</p>
+    </div>
+    <div class="vs">🔄</div>
+    <div class="tech">
+      <h4>💻 기술 용어</h4>
+      <p><strong style="color:#818cf8;">API 주소</strong><br>서버에 데이터를 요청하는 경로</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================== 3. 기술 스택 ======================== -->
+<section>
+  <div class="section-number">3</div>
+  <h2>어떤 도구를 사용했나요?</h2>
+  <p class="subtitle">레고 블록처럼 여러 도구를 조합해서 만들었어요</p>
+
+  <div class="tech-grid">
+    <div class="tech-card tc-react">
+      <div class="icon">⚛️</div>
+      <h3>React</h3>
+      <p>화면을 만드는 도구예요.<br>레고처럼 작은 조각들을 쌓아서 전체 화면을 만들어요.</p>
+      <div style="margin-top:10px;">
+        <span class="tag" style="background:rgba(97,218,251,0.2); color:#61dafb;">화면 제작</span>
+      </div>
+    </div>
+
+    <div class="tech-card tc-vite">
+      <div class="icon">⚡</div>
+      <h3>Vite</h3>
+      <p>코드를 초고속으로 브라우저가 이해할 수 있게 변환해줘요.<br>번개처럼 빠른 빌드 도구예요!</p>
+      <div style="margin-top:10px;">
+        <span class="tag" style="background:rgba(189,52,254,0.2); color:#bd34fe;">빌드 도구</span>
+      </div>
+    </div>
+
+    <div class="tech-card tc-tail">
+      <div class="icon">🎨</div>
+      <h3>Tailwind CSS</h3>
+      <p>색깔, 크기, 모양 등 디자인을 쉽게 만드는 도구예요.<br>클래스 이름만 붙이면 예뻐져요!</p>
+      <div style="margin-top:10px;">
+        <span class="tag" style="background:rgba(6,182,212,0.2); color:#06b6d4;">스타일링</span>
+      </div>
+    </div>
+
+    <div class="tech-card tc-express">
+      <div class="icon">🖥️</div>
+      <h3>Express</h3>
+      <p>서버를 만드는 도구예요.<br>로그인, 회원가입, 진도 저장을 처리해줘요.</p>
+      <div style="margin-top:10px;">
+        <span class="tag" style="background:rgba(255,255,255,0.1); color:#e2e8f0;">서버 제작</span>
+      </div>
+    </div>
+
+    <div class="tech-card tc-sqlite">
+      <div class="icon">🗄️</div>
+      <h3>SQLite</h3>
+      <p>데이터를 저장하는 초소형 데이터베이스예요.<br>파일 하나로 동작하는 작은 냉장고예요!</p>
+      <div style="margin-top:10px;">
+        <span class="tag" style="background:rgba(249,115,22,0.2); color:#f97316;">데이터 저장</span>
+      </div>
+    </div>
+
+    <div class="tech-card tc-jwt">
+      <div class="icon">🔑</div>
+      <h3>JWT</h3>
+      <p>로그인할 때 주는 디지털 열쇠예요.<br>이 열쇠가 있으면 내 정보에 접근할 수 있어요!</p>
+      <div style="margin-top:10px;">
+        <span class="tag" style="background:rgba(236,72,153,0.2); color:#ec4899;">보안 인증</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================== 4. 로그인 흐름 ======================== -->
+<section>
+  <div class="section-number">4</div>
+  <h2>로그인은 어떻게 작동할까요?</h2>
+  <p class="subtitle">버튼 하나 누르면 뒤에서 이런 일들이 벌어져요!</p>
+
+  <div class="flow-steps">
+    <div class="flow-step" data-step="1">
+      <h4>👤 사용자가 이메일과 비밀번호 입력</h4>
+      <p>로그인 화면에서 내 정보를 입력해요. 비밀번호는 보안을 위해 ●●●● 로 가려져 보여요.</p>
+    </div>
+    <div class="flow-step" data-step="2">
+      <h4>📨 프론트엔드 → 백엔드로 전송</h4>
+      <p>입력한 정보가 인터넷을 통해 서버(백엔드)로 전달돼요. 택배처럼 정보가 배송되는 거예요!</p>
+    </div>
+    <div class="flow-step" data-step="3">
+      <h4>🔍 백엔드가 데이터베이스에서 확인</h4>
+      <p>서버가 냉장고(데이터베이스)에서 같은 이메일의 계정을 찾아봐요. 비밀번호가 맞는지 확인해요.</p>
+    </div>
+    <div class="flow-step" data-step="4">
+      <h4>🔑 맞으면 JWT 토큰 발급</h4>
+      <p>비밀번호가 맞으면 특별한 디지털 열쇠(JWT)를 만들어 줘요. 이 열쇠는 7일 후에 사라져요.</p>
+    </div>
+    <div class="flow-step" data-step="5">
+      <h4>💾 프론트엔드가 토큰 저장</h4>
+      <p>받은 열쇠를 브라우저에 저장해요. 다음에 또 방문해도 다시 로그인 안 해도 돼요!</p>
+    </div>
+    <div class="flow-step" data-step="6">
+      <h4>🎉 강의 페이지로 이동!</h4>
+      <p>로그인 성공! 이제 학습 진도도 저장되고 내 계정으로 모든 기능을 쓸 수 있어요.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================== 5. 페이지 구조 ======================== -->
+<section>
+  <div class="section-number">5</div>
+  <h2>어떤 페이지들이 있나요?</h2>
+  <p class="subtitle">총 7개의 페이지로 이루어진 웹앱이에요</p>
+
+  <div class="pages-grid">
+    <div class="page-card">
+      <span class="page-url">/ (홈)</span>
+      <h3>🏠 랜딩 페이지</h3>
+      <p>처음 방문했을 때 보이는 화면이에요. "바이브 코딩이 뭔지" 소개하고 수강 시작 버튼이 있어요.</p>
+    </div>
+    <div class="page-card">
+      <span class="page-url">/roadmap</span>
+      <h3>🗺️ 로드맵 페이지</h3>
+      <p>전체 학습 여정을 지도처럼 보여줘요. 어떤 순서로 배워야 하는지 한눈에 볼 수 있어요.</p>
+    </div>
+    <div class="page-card">
+      <span class="page-url">/courses</span>
+      <h3>📚 강의 목록</h3>
+      <p>3개 모듈의 모든 강의를 카드 형태로 보여줘요. 내 학습 진도율도 표시돼요.</p>
+    </div>
+    <div class="page-card">
+      <span class="page-url">/courses/:id</span>
+      <h3>📖 강의 상세</h3>
+      <p>선택한 모듈의 레슨 목록을 보여줘요. "수강 시작" 버튼으로 바로 시작할 수 있어요.</p>
+    </div>
+    <div class="page-card">
+      <span class="page-url">/courses/:id/lessons/:id</span>
+      <h3>💻 레슨 페이지</h3>
+      <p>실제 강의 내용을 읽고 코드 실습도 할 수 있어요. 완료 버튼을 누르면 다음 레슨으로!</p>
+    </div>
+    <div class="page-card">
+      <span class="page-url">/login</span>
+      <h3>🔐 로그인</h3>
+      <p>이미 계정이 있는 사람이 로그인하는 화면이에요. 이메일과 비밀번호를 입력해요.</p>
+    </div>
+    <div class="page-card">
+      <span class="page-url">/register</span>
+      <h3>✏️ 회원가입</h3>
+      <p>새 계정을 만드는 화면이에요. 이름, 이메일, 비밀번호를 입력하면 바로 시작할 수 있어요!</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================== 6. 커리큘럼 ======================== -->
+<section>
+  <div class="section-number">6</div>
+  <h2>무엇을 배울 수 있나요?</h2>
+  <p class="subtitle">3개 모듈, 총 15개 레슨으로 구성되어 있어요</p>
+
+  <div class="module-cards">
+    <div class="module-card m1">
+      <div class="module-header">
+        <div class="num">🤖 모듈 1</div>
+        <h3>AI 도구 활용법</h3>
+        <p style="font-size:0.8rem; opacity:0.8; margin-top:6px;">4시간 · 5레슨</p>
+      </div>
+      <div class="module-body">
+        <ul>
+          <li>바이브 코딩이란?</li>
+          <li>AI 코딩 도구 생태계</li>
+          <li>Cursor IDE 완벽 세팅</li>
+          <li>AI와 페어 프로그래밍</li>
+          <li>코드 리뷰를 AI에게</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="module-card m2">
+      <div class="module-header">
+        <div class="num">✍️ 모듈 2</div>
+        <h3>프롬프트 엔지니어링</h3>
+        <p style="font-size:0.8rem; opacity:0.8; margin-top:6px;">5시간 · 5레슨</p>
+      </div>
+      <div class="module-body">
+        <ul>
+          <li>좋은 프롬프트의 원칙</li>
+          <li>Chain-of-Thought 기법</li>
+          <li>시스템 프롬프트 설계</li>
+          <li>반복 개선 전략</li>
+          <li>프롬프트 템플릿 라이브러리</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="module-card m3">
+      <div class="module-header">
+        <div class="num">🚀 모듈 3</div>
+        <h3>실전 프로젝트</h3>
+        <p style="font-size:0.8rem; opacity:0.8; margin-top:6px;">6시간 · 5레슨</p>
+      </div>
+      <div class="module-body">
+        <ul>
+          <li>프로젝트 요구사항 정의</li>
+          <li>AI로 아키텍처 설계</li>
+          <li>빠른 프로토타이핑</li>
+          <li>디버깅 &amp; 리팩터링</li>
+          <li>배포 및 출시</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================== 7. 데이터베이스 ======================== -->
+<section>
+  <div class="section-number">7</div>
+  <h2>데이터는 어떻게 저장되나요?</h2>
+  <p class="subtitle">냉장고(DB)에는 딱 두 종류의 정보만 저장해요</p>
+
+  <div class="db-diagram">
+    <div class="db-table">
+      <div class="db-table-header">
+        👤 users <span style="font-size:0.75rem; opacity:0.7;">(회원 정보)</span>
+      </div>
+      <div class="db-table-body">
+        <div class="db-field">
+          <span class="db-field-name">id</span>
+          <span class="db-field-pk">🔑 기본키</span>
+          <span class="db-field-type">숫자</span>
+        </div>
+        <div class="db-field">
+          <span class="db-field-name">email</span>
+          <span class="db-field-type">이메일 주소</span>
+        </div>
+        <div class="db-field">
+          <span class="db-field-name">password</span>
+          <span class="db-field-type">암호화된 비밀번호</span>
+        </div>
+        <div class="db-field">
+          <span class="db-field-name">name</span>
+          <span class="db-field-type">이름</span>
+        </div>
+        <div class="db-field">
+          <span class="db-field-name">created_at</span>
+          <span class="db-field-type">가입 날짜</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="db-table">
+      <div class="db-table-header">
+        📊 progress <span style="font-size:0.75rem; opacity:0.7;">(학습 진도)</span>
+      </div>
+      <div class="db-table-body">
+        <div class="db-field">
+          <span class="db-field-name">id</span>
+          <span class="db-field-pk">🔑 기본키</span>
+          <span class="db-field-type">숫자</span>
+        </div>
+        <div class="db-field">
+          <span class="db-field-name">user_id</span>
+          <span class="db-field-type">👤 회원 번호</span>
+        </div>
+        <div class="db-field">
+          <span class="db-field-name">lesson_id</span>
+          <span class="db-field-type">📖 레슨 번호</span>
+        </div>
+        <div class="db-field">
+          <span class="db-field-name">completed</span>
+          <span class="db-field-type">완료 여부 (1/0)</span>
+        </div>
+        <div class="db-field">
+          <span class="db-field-name">updated_at</span>
+          <span class="db-field-type">완료 날짜</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px; padding:20px; background:rgba(249,115,22,0.06); border:1px solid rgba(249,115,22,0.2); border-radius:16px;">
+    <p style="font-size:0.85rem; color:#94a3b8; line-height:1.8;">
+      📒 <strong style="color:#fed7aa;">쉽게 말하면:</strong>
+      users 테이블은 <strong style="color:#fb923c;">회원 명단 공책</strong>이고,
+      progress 테이블은 <strong style="color:#fb923c;">출석부</strong>예요.
+      "홍길동(user_id=1)이 레슨3(lesson_id=m1-l3)을 완료했다"는 식으로 기록해요!
+    </p>
+  </div>
+</section>
+
+
+<!-- ======================== 8. API 설명 ======================== -->
+<section>
+  <div class="section-number">8</div>
+  <h2>API가 뭔가요?</h2>
+  <p class="subtitle">프론트엔드와 백엔드가 대화하는 규칙이에요</p>
+
+  <div style="display:grid; gap:12px;">
+    <div class="card" style="border-left: 4px solid #22c55e;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+        <span style="background:#22c55e; color:#000; padding:3px 10px; border-radius:6px; font-size:0.75rem; font-weight:700;">POST</span>
+        <code style="background:rgba(255,255,255,0.08); padding:4px 10px; border-radius:6px; font-size:0.82rem; color:#86efac;">/api/auth/register</code>
+        <span style="color:#94a3b8; font-size:0.82rem;">회원가입</span>
+      </div>
+      <p style="font-size:0.82rem; color:#94a3b8;">📮 이름·이메일·비밀번호를 보내면 → 새 계정을 만들고 로그인 열쇠(토큰)를 돌려줘요</p>
+    </div>
+
+    <div class="card" style="border-left: 4px solid #3b82f6;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+        <span style="background:#3b82f6; color:#fff; padding:3px 10px; border-radius:6px; font-size:0.75rem; font-weight:700;">POST</span>
+        <code style="background:rgba(255,255,255,0.08); padding:4px 10px; border-radius:6px; font-size:0.82rem; color:#93c5fd;">/api/auth/login</code>
+        <span style="color:#94a3b8; font-size:0.82rem;">로그인</span>
+      </div>
+      <p style="font-size:0.82rem; color:#94a3b8;">🔐 이메일·비밀번호를 보내면 → 맞으면 열쇠(토큰)를 돌려줘요. 틀리면 오류!</p>
+    </div>
+
+    <div class="card" style="border-left: 4px solid #a855f7;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+        <span style="background:#a855f7; color:#fff; padding:3px 10px; border-radius:6px; font-size:0.75rem; font-weight:700;">GET</span>
+        <code style="background:rgba(255,255,255,0.08); padding:4px 10px; border-radius:6px; font-size:0.82rem; color:#d8b4fe;">/api/progress</code>
+        <span style="color:#94a3b8; font-size:0.82rem;">진도 조회</span>
+      </div>
+      <p style="font-size:0.82rem; color:#94a3b8;">📊 내 학습 열쇠를 보내면 → 내가 완료한 레슨 목록을 돌려줘요</p>
+    </div>
+
+    <div class="card" style="border-left: 4px solid #f97316;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+        <span style="background:#f97316; color:#fff; padding:3px 10px; border-radius:6px; font-size:0.75rem; font-weight:700;">POST</span>
+        <code style="background:rgba(255,255,255,0.08); padding:4px 10px; border-radius:6px; font-size:0.82rem; color:#fdba74;">/api/progress/:레슨ID</code>
+        <span style="color:#94a3b8; font-size:0.82rem;">레슨 완료</span>
+      </div>
+      <p style="font-size:0.82rem; color:#94a3b8;">✅ 레슨 번호를 보내면 → 출석부에 "완료!"라고 체크해요</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================== 9. 배포 과정 ======================== -->
+<section>
+  <div class="section-number">9</div>
+  <h2>인터넷에 올리는 과정</h2>
+  <p class="subtitle">코드를 전 세계 누구나 볼 수 있게 만드는 여정</p>
+
+  <div style="margin-bottom:24px;">
+    <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:16px;">🖥️ <strong style="color:#c7d2fe;">프론트엔드</strong> (화면) 배포 경로:</p>
+    <div class="deploy-flow">
+      <div class="deploy-node dn-code">
+        <div class="d-icon">⌨️</div>
+        <h4>코드 작성</h4>
+        <p>React 코드</p>
+      </div>
+      <div class="deploy-arrow">→</div>
+      <div class="deploy-node dn-git">
+        <div class="d-icon">📦</div>
+        <h4>git push</h4>
+        <p>GitHub 저장소</p>
+      </div>
+      <div class="deploy-arrow">→</div>
+      <div class="deploy-node dn-actions">
+        <div class="d-icon">🤖</div>
+        <h4>자동 빌드</h4>
+        <p>GitHub Actions</p>
+      </div>
+      <div class="deploy-arrow">→</div>
+      <div class="deploy-node dn-pages">
+        <div class="d-icon">🌐</div>
+        <h4>배포 완료!</h4>
+        <p>GitHub Pages</p>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:16px;">⚙️ <strong style="color:#c7d2fe;">백엔드</strong> (서버) 배포 경로:</p>
+    <div class="deploy-flow">
+      <div class="deploy-node dn-code">
+        <div class="d-icon">⌨️</div>
+        <h4>코드 작성</h4>
+        <p>Express 코드</p>
+      </div>
+      <div class="deploy-arrow">→</div>
+      <div class="deploy-node dn-git">
+        <div class="d-icon">📦</div>
+        <h4>railway up</h4>
+        <p>파일 업로드</p>
+      </div>
+      <div class="deploy-arrow">→</div>
+      <div class="deploy-node dn-actions">
+        <div class="d-icon">🔨</div>
+        <h4>자동 빌드</h4>
+        <p>npm install</p>
+      </div>
+      <div class="deploy-arrow">→</div>
+      <div class="deploy-node dn-railway">
+        <div class="d-icon">🚂</div>
+        <h4>배포 완료!</h4>
+        <p>Railway 서버</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px; padding:20px; background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.2); border-radius:16px;">
+    <p style="font-size:0.85rem; color:#94a3b8; line-height:1.8;">
+      🚀 <strong style="color:#c7d2fe;">핵심 포인트:</strong>
+      코드를 수정하고 <code style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; color:#818cf8;">git push</code>만 하면
+      GitHub Actions 로봇이 알아서 빌드하고 배포해줘요!
+      사람이 일일이 올릴 필요가 없어요 🤖
+    </p>
+  </div>
+</section>
+
+
+<!-- ======================== 10. 색상 시스템 ======================== -->
+<section>
+  <div class="section-number">10</div>
+  <h2>디자인 색상 시스템</h2>
+  <p class="subtitle">어두운 밤하늘 테마로 전문적인 느낌을 줬어요</p>
+
+  <div class="color-palette">
+    <div class="color-swatch">
+      <div class="swatch-box" style="background:#6366F1;"></div>
+      <div class="swatch-label">주요색</div>
+      <div class="swatch-hex">#6366F1</div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-box" style="background:#8B5CF6;"></div>
+      <div class="swatch-label">보조색</div>
+      <div class="swatch-hex">#8B5CF6</div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-box" style="background:#06B6D4;"></div>
+      <div class="swatch-label">강조색</div>
+      <div class="swatch-hex">#06B6D4</div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-box" style="background:#10B981;"></div>
+      <div class="swatch-label">성공색</div>
+      <div class="swatch-hex">#10B981</div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-box" style="background:#0F172A;"></div>
+      <div class="swatch-label">배경색</div>
+      <div class="swatch-hex">#0F172A</div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-box" style="background:#1E293B;"></div>
+      <div class="swatch-label">카드색</div>
+      <div class="swatch-hex">#1E293B</div>
+    </div>
+    <div class="color-swatch">
+      <div class="swatch-box" style="background:#F8FAFC;"></div>
+      <div class="swatch-label">글자색</div>
+      <div class="swatch-hex">#F8FAFC</div>
+    </div>
+  </div>
+
+  <div style="margin-top:30px; padding:24px; background:rgba(255,255,255,0.03); border-radius:16px; border:1px solid rgba(255,255,255,0.07);">
+    <p style="font-size:0.9rem; color:#94a3b8; margin-bottom:12px;">🔤 <strong style="color:#c7d2fe;">글꼴 (폰트)</strong></p>
+    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+      <div style="padding:16px; background:rgba(255,255,255,0.04); border-radius:12px; flex:1; min-width:160px;">
+        <p style="font-family:'Inter',sans-serif; font-size:1.2rem; font-weight:700; margin-bottom:4px;">Inter</p>
+        <p style="font-size:0.75rem; color:#64748b;">제목 & 본문에 사용</p>
+      </div>
+      <div style="padding:16px; background:rgba(255,255,255,0.04); border-radius:12px; flex:1; min-width:160px;">
+        <p style="font-family:monospace; font-size:1.2rem; font-weight:700; margin-bottom:4px;">JetBrains Mono</p>
+        <p style="font-size:0.75rem; color:#64748b;">코드 표시에 사용</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================== SUMMARY ======================== -->
+<section>
+  <div style="text-align:center; padding:40px; background:linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.1)); border:1px solid rgba(99,102,241,0.3); border-radius:28px;">
+    <p style="font-size:3rem; margin-bottom:16px;">🎉</p>
+    <h2 style="font-size:1.8rem; margin-bottom:12px; background:linear-gradient(90deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+      정리해보면!
+    </h2>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:12px; margin:24px 0; text-align:left;">
+      <div style="background:rgba(255,255,255,0.05); border-radius:14px; padding:16px;">
+        <p style="font-size:1.5rem; margin-bottom:6px;">⚛️</p>
+        <p style="font-size:0.82rem; font-weight:700; color:#c7d2fe; margin-bottom:4px;">화면 (프론트엔드)</p>
+        <p style="font-size:0.75rem; color:#94a3b8;">React + Vite + Tailwind</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); border-radius:14px; padding:16px;">
+        <p style="font-size:1.5rem; margin-bottom:6px;">⚙️</p>
+        <p style="font-size:0.82rem; font-weight:700; color:#c7d2fe; margin-bottom:4px;">서버 (백엔드)</p>
+        <p style="font-size:0.75rem; color:#94a3b8;">Node.js + Express</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); border-radius:14px; padding:16px;">
+        <p style="font-size:1.5rem; margin-bottom:6px;">🗄️</p>
+        <p style="font-size:0.82rem; font-weight:700; color:#c7d2fe; margin-bottom:4px;">저장 (데이터베이스)</p>
+        <p style="font-size:0.75rem; color:#94a3b8;">SQLite + JWT 인증</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); border-radius:14px; padding:16px;">
+        <p style="font-size:1.5rem; margin-bottom:6px;">🚀</p>
+        <p style="font-size:0.82rem; font-weight:700; color:#c7d2fe; margin-bottom:4px;">배포</p>
+        <p style="font-size:0.75rem; color:#94a3b8;">GitHub Pages + Railway</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); border-radius:14px; padding:16px;">
+        <p style="font-size:1.5rem; margin-bottom:6px;">📚</p>
+        <p style="font-size:0.82rem; font-weight:700; color:#c7d2fe; margin-bottom:4px;">강의 구성</p>
+        <p style="font-size:0.75rem; color:#94a3b8;">3모듈 · 15레슨</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); border-radius:14px; padding:16px;">
+        <p style="font-size:1.5rem; margin-bottom:6px;">🤖</p>
+        <p style="font-size:0.82rem; font-weight:700; color:#c7d2fe; margin-bottom:4px;">자동 배포</p>
+        <p style="font-size:0.75rem; color:#94a3b8;">GitHub Actions</p>
+      </div>
+    </div>
+    <p style="color:#94a3b8; font-size:0.9rem; line-height:1.8;">
+      이 모든 것이 합쳐져서<br>
+      <strong style="color:#c7d2fe;">바이브 코딩 아카데미</strong>가 만들어졌어요! 🎊
+    </p>
+  </div>
+</section>
+
+
+<footer>
+  <p>⚡ <span>VibeCoding Academy</span> 기술 설명서</p>
+  <p style="margin-top:8px;">초등학생도 이해할 수 있는 개발 이야기 🚀</p>
+</footer>
+
+<script>
+  // 별 생성
+  const starsContainer = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const star = document.createElement('div');
+    star.classList.add('star');
+    const size = Math.random() * 3 + 1;
+    star.style.cssText = `
+      width: ${size}px; height: ${size}px;
+      top: ${Math.random() * 100}%;
+      left: ${Math.random() * 100}%;
+      animation-delay: ${Math.random() * 3}s;
+      animation-duration: ${2 + Math.random() * 3}s;
+    `;
+    starsContainer.appendChild(star);
+  }
+
+  // 스크롤 애니메이션
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('section').forEach(sec => {
+    sec.style.opacity = '0';
+    sec.style.transform = 'translateY(30px)';
+    sec.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(sec);
+  });
+</script>
+
+</body>
+</html>
