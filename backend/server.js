@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 3001;
 const allowedOrigins = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
+  'https://kimddol3.github.io',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
